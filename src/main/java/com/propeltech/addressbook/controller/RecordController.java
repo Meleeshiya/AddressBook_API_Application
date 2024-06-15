@@ -5,9 +5,7 @@ import com.propeltech.addressbook.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,8 +22,20 @@ public class RecordController {
         return new ResponseEntity<>(entries, HttpStatus.OK);
     }
 
+    @GetMapping("/{email}")
+    public ResponseEntity<Object> getRecordByEmail(@PathVariable String email) {
+        Record record = recordService.viewRecord(email);
+        if (record != null) {
+            return new ResponseEntity<>(record, HttpStatus.FOUND);
+        } else {
+            return new ResponseEntity<>("Record not found in Address Book", HttpStatus.NOT_FOUND);
+        }
+    }
 
-
-
+    @PostMapping("/save")
+    public ResponseEntity<Void> addRecord(@RequestBody Record record) {
+        recordService.addRecord(record);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
 }

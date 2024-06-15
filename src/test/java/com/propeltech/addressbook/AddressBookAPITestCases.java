@@ -13,8 +13,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -65,7 +64,7 @@ public class AddressBookAPITestCases {
     }
 
     @Test
-    public void TestCaseForListAllEntries() {
+    public void TestCaseForListAllRecords() {
         List<Record> records = recordServiceImpl.listAllRecords();
         assertEquals(3, records.size());
         assertTrue(records.contains(record1));
@@ -73,4 +72,29 @@ public class AddressBookAPITestCases {
         assertTrue(records.contains(record3));
     }
 
+    @Test
+    public void TestCaseForViewRecord() {
+        Record record = recordServiceImpl.viewRecord("monica.gel@example.com");
+        assertNotNull(record);
+        assertEquals("Monica", record.getFirstName());
+        assertEquals("Geller", record.getLastName());
+
+
+        Record nonExistentRecord = recordServiceImpl.viewRecord("noemailfound@example.com");
+        assertNull(nonExistentRecord);
+    }
+
+    @Test
+    public void TestCaseForAddRecord() {
+        Record newRecord = new Record();
+        newRecord.setFirstName("William");
+        newRecord.setLastName("Tuman");
+        newRecord.setEmail("will.tumn@example.com");
+        newRecord.setPhone("0764546778");
+
+        Record addedRecord = recordServiceImpl.addRecord(newRecord);
+        assertNotNull(addedRecord);
+        assertEquals(4, recordServiceImpl.listAllRecords().size());
+        assertTrue(recordServiceImpl.listAllRecords().contains(newRecord));
+    }
 }

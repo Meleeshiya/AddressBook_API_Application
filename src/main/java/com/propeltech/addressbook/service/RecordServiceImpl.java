@@ -39,4 +39,20 @@ public class RecordServiceImpl implements RecordService{
     public List<Record> listAllRecords() {
         return records;
     }
+
+    @Override
+    public Record viewRecord(String email) {
+        return records.stream()
+                .filter(record -> record.getEmail().equalsIgnoreCase(email))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public Record addRecord(Record record) {
+        records.add(record);
+        saveRecords();
+        return record;
+    }
+
 }

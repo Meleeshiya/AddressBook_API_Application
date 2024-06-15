@@ -6,5 +6,8 @@ import java.util.List;
 public interface RecordService {
 
     List<Record> listAllRecords();
+    Record viewRecord(String email);
+    Record addRecord(Record record);
+
 
 }
