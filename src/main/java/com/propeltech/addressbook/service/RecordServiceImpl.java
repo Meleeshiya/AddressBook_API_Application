@@ -2,7 +2,10 @@ package com.propeltech.addressbook.service;
 
 import com.propeltech.addressbook.entity.Record;
 import com.propeltech.addressbook.util.JsonFileUtil;
+import com.propeltech.addressbook.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -52,7 +55,8 @@ public class RecordServiceImpl implements RecordService{
     @Override
     public Record addRecord(Record record) {
         boolean isEmailUsed = records.stream().anyMatch(rec -> rec.getEmail().equalsIgnoreCase(record.getEmail()));
-        if(isEmailUsed){
+
+        if (isEmailUsed) {
             return null;
         } else {
             records.add(record);
@@ -83,6 +87,19 @@ public class RecordServiceImpl implements RecordService{
             saveRecords();
         }
         return isRemoved;
+    }
+
+    @Override
+    public ResponseEntity<Object> validateRecord(Record record) {
+        if (!Validator.isValidEmail(record.getEmail())) {
+            return new ResponseEntity<>("Invalid email format. Please provide a valid email address.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!Validator.isValidPhoneNumber(record.getPhone())) {
+            return new ResponseEntity<>("Invalid phone number format. Please provide a 10-digit phone number.", HttpStatus.BAD_REQUEST);
+        }
+
+        return null;
     }
 
 }

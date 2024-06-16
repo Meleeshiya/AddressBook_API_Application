@@ -1,6 +1,8 @@
 package com.propeltech.addressbook.service;
 
 import com.propeltech.addressbook.entity.Record;
+import org.springframework.http.ResponseEntity;
+
 import java.util.List;
 
 public interface RecordService {
@@ -10,6 +12,8 @@ public interface RecordService {
     Record addRecord(Record record);
     Record editRecord(Record record);
     boolean deleteRecord(String email);
+    ResponseEntity<Object> validateRecord(Record record);
+
 
 
 }

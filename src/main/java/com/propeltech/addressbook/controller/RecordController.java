@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 
 @RestController
 @RequestMapping("api/records")
@@ -34,13 +34,17 @@ public class RecordController {
 
     @PostMapping("/save")
     public ResponseEntity<Object> addRecord(@RequestBody Record record) {
-        Record savedRecord = recordService.addRecord(record);
-        if(savedRecord != null){
-            return new ResponseEntity<>("The record has been successfully added to the Address Book.",HttpStatus.CREATED);
-        }else {
-            return new ResponseEntity<>("The email address you provided is already in use. Please use a different email address.", HttpStatus.CONFLICT);
+        ResponseEntity<Object> validationResponse = recordService.validateRecord(record);
+        if (validationResponse != null) {
+            return validationResponse;
         }
 
+        Record savedRecord = recordService.addRecord(record);
+        if (savedRecord != null) {
+            return new ResponseEntity<>("The record has been successfully added to the Address Book.", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("The email address you provided is already in use. Please use a different email address.", HttpStatus.CONFLICT);
+        }
     }
 
     @PutMapping("/update")

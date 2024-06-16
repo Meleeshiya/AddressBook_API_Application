@@ -1,8 +1,6 @@
 package com.propeltech.addressbook;
 
-import com.propeltech.addressbook.controller.RecordController;
 import com.propeltech.addressbook.entity.Record;
-import com.propeltech.addressbook.service.RecordService;
 import com.propeltech.addressbook.service.RecordServiceImpl;
 import com.propeltech.addressbook.util.JsonFileUtil;
 import org.junit.Before;
@@ -146,5 +144,50 @@ public class AddressBookAPITestCases {
 
     }
 
+    @Test
+    public void TestCaseForValidateEmail() {
+        Record newRecord1 = new Record();
+        newRecord1.setFirstName("William");
+        newRecord1.setLastName("Tuman");
+        newRecord1.setEmail("will.tumnexample.com");
+        newRecord1.setPhone("0764546778");
+
+        ResponseEntity<Object> result1 = recordServiceImpl.validateRecord(newRecord1);
+        assertEquals(HttpStatus.BAD_REQUEST, result1.getStatusCode());
+        assertEquals("Invalid email format. Please provide a valid email address.", result1.getBody());
+
+        Record newRecord2 = new Record();
+        newRecord2.setFirstName("Will");
+        newRecord2.setLastName("Hallum");
+        newRecord2.setEmail("will.hal@example.com");
+        newRecord2.setPhone("0764546890");
+
+        ResponseEntity<Object> result2 = recordServiceImpl.validateRecord(newRecord2);
+        assertNull(result2);
+
+    }
+
+    @Test
+    public void TestCaseForValidatePhoneNumber() {
+        Record newRecord1 = new Record();
+        newRecord1.setFirstName("Jane");
+        newRecord1.setLastName("Eyre");
+        newRecord1.setEmail("jane.ey@example.com");
+        newRecord1.setPhone("07645467");
+
+        ResponseEntity<Object> result1 = recordServiceImpl.validateRecord(newRecord1);
+        assertEquals(HttpStatus.BAD_REQUEST, result1.getStatusCode());
+        assertEquals("Invalid phone number format. Please provide a 10-digit phone number.", result1.getBody());
+
+        Record newRecord2 = new Record();
+        newRecord2.setFirstName("Jacob");
+        newRecord2.setLastName("Wayne");
+        newRecord2.setEmail("jacob.way@example.com");
+        newRecord2.setPhone("0734446899");
+
+        ResponseEntity<Object> result2 = recordServiceImpl.validateRecord(newRecord2);
+        assertNull(result2);
+
+    }
 
 }
