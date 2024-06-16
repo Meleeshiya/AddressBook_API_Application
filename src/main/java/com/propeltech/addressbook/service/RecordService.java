@@ -8,6 +8,8 @@ public interface RecordService {
     List<Record> listAllRecords();
     Record viewRecord(String email);
     Record addRecord(Record record);
+    Record editRecord(Record record);
+    boolean deleteRecord(String email);
 
 
 }

@@ -97,4 +97,35 @@ public class AddressBookAPITestCases {
         assertEquals(4, recordServiceImpl.listAllRecords().size());
         assertTrue(recordServiceImpl.listAllRecords().contains(newRecord));
     }
+
+    @Test
+    public void TestCaseForEditRecord() {
+        Record updatedRecord = new Record();
+        updatedRecord.setFirstName("Chandler");
+        updatedRecord.setLastName("Grill");
+        updatedRecord.setEmail("chand.bing@example.com");
+        updatedRecord.setPhone("07361123456");
+
+        Record editedRecord = recordServiceImpl.editRecord(updatedRecord);
+        assertNotNull(editedRecord);
+        assertEquals("Chandler", editedRecord.getFirstName());
+        assertEquals("Grill", editedRecord.getLastName());
+        assertEquals("07361123456", editedRecord.getPhone());
+
+        Record nonExistentRecord = new Record();
+        nonExistentRecord.setFirstName("Xxxx");
+        nonExistentRecord.setLastName("Yyyyy");
+        nonExistentRecord.setEmail("noemailfound@example.com");
+
+        Record result = recordServiceImpl.editRecord(nonExistentRecord);
+        assertNull(result);
+    }
+
+    @Test
+    public void TestCaseForDeleteRecord() {
+        recordServiceImpl.deleteRecord("rach.green@example.com");
+        assertEquals(2, recordServiceImpl.listAllRecords().size());
+        assertFalse(recordServiceImpl.listAllRecords().contains(record3));
+        assertTrue(recordServiceImpl.listAllRecords().contains(record1));
+    }
 }

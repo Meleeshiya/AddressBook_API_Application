@@ -38,4 +38,23 @@ public class RecordController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<Object> updateEntry(@RequestBody Record record) {
+        Record updatedRecord = recordService.editRecord(record);
+        if (updatedRecord != null) {
+            return new ResponseEntity<>(updatedRecord, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Unable to edit: Record could not be found in the Address Book.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/delete/{email}")
+    public ResponseEntity<Object> deleteEntry(@PathVariable String email) {
+        boolean isDeleted = recordService.deleteRecord(email);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>("Unable to delete: Record could not be found in the Address Book", HttpStatus.NOT_FOUND);
+        }
+    }
 }

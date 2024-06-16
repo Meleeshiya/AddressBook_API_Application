@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RecordServiceImpl implements RecordService{
@@ -53,6 +54,30 @@ public class RecordServiceImpl implements RecordService{
         records.add(record);
         saveRecords();
         return record;
+    }
+
+    @Override
+    public Record editRecord(Record record) {
+        Optional<Record> existingEntry = records.stream()
+                .filter(e -> e.getEmail().equalsIgnoreCase(record.getEmail()))
+                .findFirst();
+        if (existingEntry.isPresent()) {
+            records.remove(existingEntry.get());
+            records.add(record);
+            saveRecords();
+            return record;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean deleteRecord(String email) {
+        boolean isRemoved = records.removeIf(entry -> entry.getEmail().equalsIgnoreCase(email));
+        if (isRemoved) {
+            saveRecords();
+        }
+        return isRemoved;
     }
 
 }
