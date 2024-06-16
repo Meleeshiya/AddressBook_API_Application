@@ -1,6 +1,8 @@
 package com.propeltech.addressbook;
 
+import com.propeltech.addressbook.controller.RecordController;
 import com.propeltech.addressbook.entity.Record;
+import com.propeltech.addressbook.service.RecordService;
 import com.propeltech.addressbook.service.RecordServiceImpl;
 import com.propeltech.addressbook.util.JsonFileUtil;
 import org.junit.Before;
@@ -8,6 +10,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -128,4 +132,19 @@ public class AddressBookAPITestCases {
         assertFalse(recordServiceImpl.listAllRecords().contains(record3));
         assertTrue(recordServiceImpl.listAllRecords().contains(record1));
     }
+
+    @Test
+    public void TestCaseForCheckDuplicateEmail() {
+        Record newRecord = new Record();
+        newRecord.setFirstName("Monalisa");
+        newRecord.setLastName("Gellhard");
+        newRecord.setEmail("monica.gel@example.com");
+        newRecord.setPhone("0745678890");
+
+        Record result = recordServiceImpl.addRecord(newRecord);
+        assertNull(result);
+
+    }
+
+
 }

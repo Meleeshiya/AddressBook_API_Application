@@ -28,14 +28,19 @@ public class RecordController {
         if (record != null) {
             return new ResponseEntity<>(record, HttpStatus.FOUND);
         } else {
-            return new ResponseEntity<>("Record not found in Address Book", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Record not found in Address Book.", HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Void> addRecord(@RequestBody Record record) {
-        recordService.addRecord(record);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<Object> addRecord(@RequestBody Record record) {
+        Record savedRecord = recordService.addRecord(record);
+        if(savedRecord != null){
+            return new ResponseEntity<>("The record has been successfully added to the Address Book.",HttpStatus.CREATED);
+        }else {
+            return new ResponseEntity<>("The email address you provided is already in use. Please use a different email address.", HttpStatus.CONFLICT);
+        }
+
     }
 
     @PutMapping("/update")

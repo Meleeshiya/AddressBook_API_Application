@@ -51,9 +51,14 @@ public class RecordServiceImpl implements RecordService{
 
     @Override
     public Record addRecord(Record record) {
-        records.add(record);
-        saveRecords();
-        return record;
+        boolean isEmailUsed = records.stream().anyMatch(rec -> rec.getEmail().equalsIgnoreCase(record.getEmail()));
+        if(isEmailUsed){
+            return null;
+        } else {
+            records.add(record);
+            saveRecords();
+            return record;
+        }
     }
 
     @Override
