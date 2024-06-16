@@ -8,11 +8,11 @@ public class Validator {
     private static final String PHONE_NUMBER_FORMAT = "^\\d{10}$";
 
     public static boolean isValidEmail(String email) {
-        return Pattern.matches(EMAIL_FORMAT, email);
+        return email != null && Pattern.matches(EMAIL_FORMAT, email);
     }
 
     public static boolean isValidPhoneNumber(String phone) {
-        return Pattern.matches(PHONE_NUMBER_FORMAT, phone);
+        return phone != null && Pattern.matches(PHONE_NUMBER_FORMAT, phone);
     }
 }
 

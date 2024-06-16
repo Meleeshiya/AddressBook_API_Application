@@ -76,72 +76,17 @@ public class AddressBookAPITestCases {
 
     @Test
     public void TestCaseForViewRecord() {
-        Record record = recordServiceImpl.viewRecord("monica.gel@example.com");
-        assertNotNull(record);
-        assertEquals("Monica", record.getFirstName());
-        assertEquals("Geller", record.getLastName());
+        ResponseEntity<Object> recordResult1 = recordServiceImpl.viewRecord("monica.gel@example.com");
+        assertNotNull(recordResult1);
+        Record currentRecordFrmResult = (Record) recordResult1.getBody();
+        assertEquals("Monica", currentRecordFrmResult.getFirstName());
+        assertEquals("Geller", currentRecordFrmResult.getLastName());
+        assertEquals("0712765778", currentRecordFrmResult.getPhone());
 
 
-        Record nonExistentRecord = recordServiceImpl.viewRecord("noemailfound@example.com");
-        assertNull(nonExistentRecord);
-    }
-
-    @Test
-    public void TestCaseForAddRecord() {
-        Record newRecord = new Record();
-        newRecord.setFirstName("William");
-        newRecord.setLastName("Tuman");
-        newRecord.setEmail("will.tumn@example.com");
-        newRecord.setPhone("0764546778");
-
-        Record addedRecord = recordServiceImpl.addRecord(newRecord);
-        assertNotNull(addedRecord);
-        assertEquals(4, recordServiceImpl.listAllRecords().size());
-        assertTrue(recordServiceImpl.listAllRecords().contains(newRecord));
-    }
-
-    @Test
-    public void TestCaseForEditRecord() {
-        Record updatedRecord = new Record();
-        updatedRecord.setFirstName("Chandler");
-        updatedRecord.setLastName("Grill");
-        updatedRecord.setEmail("chand.bing@example.com");
-        updatedRecord.setPhone("07361123456");
-
-        Record editedRecord = recordServiceImpl.editRecord(updatedRecord);
-        assertNotNull(editedRecord);
-        assertEquals("Chandler", editedRecord.getFirstName());
-        assertEquals("Grill", editedRecord.getLastName());
-        assertEquals("07361123456", editedRecord.getPhone());
-
-        Record nonExistentRecord = new Record();
-        nonExistentRecord.setFirstName("Xxxx");
-        nonExistentRecord.setLastName("Yyyyy");
-        nonExistentRecord.setEmail("noemailfound@example.com");
-
-        Record result = recordServiceImpl.editRecord(nonExistentRecord);
-        assertNull(result);
-    }
-
-    @Test
-    public void TestCaseForDeleteRecord() {
-        recordServiceImpl.deleteRecord("rach.green@example.com");
-        assertEquals(2, recordServiceImpl.listAllRecords().size());
-        assertFalse(recordServiceImpl.listAllRecords().contains(record3));
-        assertTrue(recordServiceImpl.listAllRecords().contains(record1));
-    }
-
-    @Test
-    public void TestCaseForCheckDuplicateEmail() {
-        Record newRecord = new Record();
-        newRecord.setFirstName("Monalisa");
-        newRecord.setLastName("Gellhard");
-        newRecord.setEmail("monica.gel@example.com");
-        newRecord.setPhone("0745678890");
-
-        Record result = recordServiceImpl.addRecord(newRecord);
-        assertNull(result);
-
+        ResponseEntity<Object> recordResult2  = recordServiceImpl.viewRecord("noemailfound@example.com");
+        assertEquals("Record not found in Address Book.", recordResult2.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, recordResult2.getStatusCode());
     }
 
     @Test
@@ -156,6 +101,7 @@ public class AddressBookAPITestCases {
         assertEquals(HttpStatus.BAD_REQUEST, result1.getStatusCode());
         assertEquals("Invalid email format. Please provide a valid email address.", result1.getBody());
 
+
         Record newRecord2 = new Record();
         newRecord2.setFirstName("Will");
         newRecord2.setLastName("Hallum");
@@ -164,7 +110,6 @@ public class AddressBookAPITestCases {
 
         ResponseEntity<Object> result2 = recordServiceImpl.validateRecord(newRecord2);
         assertNull(result2);
-
     }
 
     @Test
@@ -187,7 +132,74 @@ public class AddressBookAPITestCases {
 
         ResponseEntity<Object> result2 = recordServiceImpl.validateRecord(newRecord2);
         assertNull(result2);
+    }
 
+    @Test
+    public void TestCaseForAddRecord() {
+        Record newRecord = new Record();
+        newRecord.setFirstName("William");
+        newRecord.setLastName("Tuman");
+        newRecord.setEmail("will.tumn@example.com");
+        newRecord.setPhone("0764546778");
+
+        ResponseEntity<Object> recordResult1 = recordServiceImpl.addRecord(newRecord);
+        assertNotNull(recordResult1);
+        assertEquals("The record has been successfully added to the Address Book.", recordResult1.getBody());
+        assertEquals(HttpStatus.CREATED, recordResult1.getStatusCode());
+        assertEquals(4, recordServiceImpl.listAllRecords().size());
+        assertTrue(recordServiceImpl.listAllRecords().contains(newRecord));
+
+        Record newRecord2 = new Record();
+        newRecord.setFirstName("Rachel");
+        newRecord.setLastName("Greenword");
+        newRecord.setEmail("rach.green@example.com");
+        newRecord.setPhone("0778454677");
+
+        ResponseEntity<Object> recordResult2 = recordServiceImpl.addRecord(newRecord);
+        assertEquals("The email address you provided is already in use. Please use a different email address.", recordResult2.getBody());
+        assertEquals(HttpStatus.CONFLICT, recordResult2.getStatusCode());
+
+    }
+
+    @Test
+    public void TestCaseForEditRecord() {
+        Record updatedRecord = new Record();
+        updatedRecord.setFirstName("Chandler");
+        updatedRecord.setLastName("Grill");
+        updatedRecord.setEmail("chand.bing@example.com");
+        updatedRecord.setPhone("07361123456");
+
+        ResponseEntity<Object> recordResult1 = recordServiceImpl.editRecord(updatedRecord);
+        assertNotNull(recordResult1);
+        assertEquals("Record has been updated successfully.", recordResult1.getBody());
+        assertEquals(HttpStatus.OK, recordResult1.getStatusCode());
+
+        Record nonExistentRecord = new Record();
+        nonExistentRecord.setFirstName("Xxxx");
+        nonExistentRecord.setLastName("Yyyyy");
+        nonExistentRecord.setEmail("noemailfound@example.com");
+
+        ResponseEntity<Object> recordResult2 = recordServiceImpl.editRecord(nonExistentRecord);
+        assertEquals("Unable to edit: Record could not be found in the Address Book.", recordResult2.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, recordResult2.getStatusCode());
+    }
+
+    @Test
+    public void TestCaseForDeleteRecord() {
+        ResponseEntity<Object> recordResult1 = recordServiceImpl.deleteRecord("rach.green@example.com");
+        assertEquals("Record removed from the Address Book successfully.", recordResult1.getBody());
+        assertEquals(HttpStatus.OK, recordResult1.getStatusCode());
+        assertEquals(2, recordServiceImpl.listAllRecords().size());
+        assertFalse(recordServiceImpl.listAllRecords().contains(record3));
+        assertTrue(recordServiceImpl.listAllRecords().contains(record2));
+        assertTrue(recordServiceImpl.listAllRecords().contains(record1));
+
+        ResponseEntity<Object> recordResult2 = recordServiceImpl.deleteRecord("xxxx.yyy@example.com");
+        assertEquals("Unable to delete: Record could not be found in the Address Book", recordResult2.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, recordResult2.getStatusCode());
+        assertEquals(2, recordServiceImpl.listAllRecords().size());
+        assertTrue(recordServiceImpl.listAllRecords().contains(record2));
+        assertTrue(recordServiceImpl.listAllRecords().contains(record1));
     }
 
 }

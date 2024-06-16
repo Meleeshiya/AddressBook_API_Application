@@ -8,10 +8,10 @@ import java.util.List;
 public interface RecordService {
 
     List<Record> listAllRecords();
-    Record viewRecord(String email);
-    Record addRecord(Record record);
-    Record editRecord(Record record);
-    boolean deleteRecord(String email);
+    ResponseEntity<Object> viewRecord(String email);
+    ResponseEntity<Object> addRecord(Record record);
+    ResponseEntity<Object> editRecord(Record record);
+    ResponseEntity<Object> deleteRecord(String email);
     ResponseEntity<Object> validateRecord(Record record);
 
 
